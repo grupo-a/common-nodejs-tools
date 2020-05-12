@@ -40,6 +40,6 @@ const _init = () => {
 }
 
 module.exports = {
-  instace: server,
+  instance: server,
   init: _init
 }
