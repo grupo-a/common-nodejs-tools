@@ -31,7 +31,7 @@ const query = async (consulta, params = []) => {
   return result.rows;
 };
 
-const queryFirstOrNull = (query, params = []) => {
+const queryFirstOrNull = async (query, params = []) => {
   if(client === null) {
     logger.info('poolWrite.connect started');
     client = await poolWrite.connect();
