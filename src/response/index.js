@@ -14,7 +14,7 @@ const _createResponse = (res, body, statusCode, headers) => {
   return res.status(statusCode).send(body);
 }
 
-const sucess = (res, body, statusCode = 200, headers = { }) => {
+const success = (res, body, statusCode = 200, headers = { }) => {
   return _createResponse(res, body, statusCode, headers);
 }
 
@@ -34,6 +34,6 @@ const error = (res, error) => {
 }
 
 module.exports = {
-  sucess,
+  success,
   error
 }
