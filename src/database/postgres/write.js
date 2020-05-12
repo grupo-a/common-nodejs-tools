@@ -31,6 +31,24 @@ const query = async (consulta, params = []) => {
   return result.rows;
 };
 
+const queryFirstOrNull = (query, params = []) => {
+  if(client === null) {
+    logger.info('poolWrite.connect started');
+    client = await poolWrite.connect();
+  }
+
+  return client.query(query, params)
+    .then(result => {
+      if (result.rowCount > 0) {
+        return result.rows[0];
+      }
+      return null;
+    })
+    .catch(err => {
+      return Promise.reject(err);
+    });
+};
+
 const queryConnection = (consulta, params = [], client) => {
   return client.query(consulta, params)
     .then(result => {
@@ -49,6 +67,7 @@ const closeConnection = (client) => {
 
 module.exports = {
   query,
+  queryFirstOrNull,
   queryConnection,
   openConnection,
   closeConnection
