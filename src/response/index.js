@@ -4,10 +4,10 @@
 // dependencies
 const _logger = require('../logger');
 
-const _createResponse = (res, body, statusCode, headers) => {
+const _createResponse = (res, body, statusCode, headers = { }) => {
   const mergeHeaders = {
     'Cache-Control': 'private, max-age=0, no-cache, no-store, must-revalidate',
-    ...headers, 
+    ...headers,
   };
 
   res.set(mergeHeaders);
@@ -19,18 +19,17 @@ const success = (res, body, statusCode = 200, headers = { }) => {
 }
 
 const error = (res, error) => {
-  _logger.error(error.message, error);
+  const statusCode = error.httpStatusCode || 500;
   const body = {
     error: {
       code: error.businessStatusCode || '500_internal-error-server',
       message: error.message
-    }
-    // TODO requestId
+    },
+    requestId: res.requestId
   };
-  const statusCode = error.httpStatusCode || 500;
-  const headers = { };
-
-  return _createResponse(res, body, statusCode, headers);
+  error.requestId = res.requestId;
+  _logger.error(error.message, error);
+  return _createResponse(res, body, statusCode);
 }
 
 module.exports = {

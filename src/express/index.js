@@ -5,6 +5,7 @@
 const express    = require('express');
 const bodyParser = require('body-parser');
 const cors       = require('cors');
+const uuid       = require('uuid');
 
 //
 // helpers
@@ -24,10 +25,19 @@ server.use(cors());
 // async error
 require('express-async-errors');
 
+//
+// x-request-id
+server.use((req, res, next) => {
+  res.requestId = req.headers['X-Request-Id'] || uuid.v4();
+  res.setHeader('X-Request-Id', res.requestId);
+
+  next();
+});
+
 const _init = () => {
   // handler errors
-  server.use(function(req, res, next) {
-    _response.error(res, new _error.HttpError('Route not found', 404, '404-route-found'))
+  server.use((req, res, next) => {
+    _response.error(res, new _error.HttpError('Route not found', 404, '404-route-found'));
   });
   server.use((err, req, res, next) => {
     _response.error(res, err);
