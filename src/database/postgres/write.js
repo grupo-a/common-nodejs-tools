@@ -21,21 +21,22 @@ const poolWrite = new pg.Pool({
 
 let client = null;
 
-const query = async (consulta, params = []) => {
+const _connect = async () => {
   if(client === null) {
     logger.info('poolWrite.connect started');
     client = await poolWrite.connect();
   }
+};
+
+const query = async (consulta, params = []) => {
+  await _connect();
 
   const result = await client.query(consulta, params);
   return result.rows;
 };
 
 const queryFirstOrNull = async (query, params = []) => {
-  if(client === null) {
-    logger.info('poolWrite.connect started');
-    client = await poolWrite.connect();
-  }
+  await _connect();
 
   return client.query(query, params)
     .then(result => {
@@ -58,17 +59,51 @@ const queryConnection = (consulta, params = [], client) => {
       return Promise.reject(err);
     });
 };
-const openConnection = async () => {
-  return await poolSafeA.connect();
+
+const startTransaction = async () => {
+  await _connect();
+
+  return client.query('BEGIN')
+    .then(result => {
+      logger.info('poolWrite.transaction started');
+      return result;
+    })
+    .catch(err => {
+      return Promise.reject(err);
+    });
 };
-const closeConnection = (client) => {
-  client.release(true);
+
+const commit = async () => {
+  await _connect();
+
+  return client.query('COMMIT')
+    .then(result => {
+      logger.info('poolWrite.transaction commited');
+      return result;
+    })
+    .catch(err => {
+      return Promise.reject(err);
+    });
+};
+
+const rollback = async () => {
+  await _connect();
+
+  return client.query('ROLLBACK')
+    .then(result => {
+      logger.info('poolWrite.transaction rollbacked');
+      return result;
+    })
+    .catch(err => {
+      return Promise.reject(err);
+    });
 };
 
 module.exports = {
   query,
   queryFirstOrNull,
   queryConnection,
-  openConnection,
-  closeConnection
+  startTransaction,
+  commit,
+  rollback
 };
