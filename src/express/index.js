@@ -37,7 +37,7 @@ server.use((req, res, next) => {
 const _init = () => {
   // handler errors
   server.use((req, res, next) => {
-    _response.error(res, new _error.HttpError('Route not found', 404, '404-route-found'));
+    _response.error(res, new _error.HttpError(`Route not found - ${req.originalUrl}`, 404, '404-route-found'));
   });
   server.use((err, req, res, next) => {
     _response.error(res, err);
