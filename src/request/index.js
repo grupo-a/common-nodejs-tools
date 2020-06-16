@@ -19,6 +19,9 @@ const handler = (options) => {
       }
 
       if (result.body) {
+        if(result.body[0] == '<'){
+          return resolve(result.body);
+        }
         return resolve(JSON.parse(result.body));
       }
 
