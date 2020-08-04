@@ -44,10 +44,10 @@ const error = (message, error) => {
   }
 };
 
-const audit = (uuid, action, payloadWhere, payloadData) => {
+const audit = (action, who, where, context, what) => {
   console.log(stringify({
     level: 'AUDIT',
-    body: { 'what': action, 'who': uuid, 'when': Date.now(), 'where': payloadWhere, 'payload': payloadData }
+    body: { 'action': action, 'who': who, 'when': Date.now(), 'where': where, 'context': context, 'what': what }
   }));
 };
 
