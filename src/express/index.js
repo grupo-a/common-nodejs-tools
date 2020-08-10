@@ -11,13 +11,13 @@ const uuid       = require('uuid');
 // helpers
 const _response = require('../response');
 const _logger   = require('../logger');
-const _error   = require('../error');
+const _error    = require('../error');
 
 //
 // config express
 const server = express();
 // parsing application/json
-server.use(bodyParser.json());
+server.use(bodyParser.json({ limit: '200kb' }));
 // parsing application/x-www-form-urlencoded
 server.use(bodyParser.urlencoded({ extended: true }));
 // cors
