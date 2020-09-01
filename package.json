@@ -2,7 +2,7 @@
   "name": "common-api",
   "version": "1.0.0",
   "main": "./src/index.js",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
