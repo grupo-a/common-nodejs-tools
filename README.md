@@ -28,7 +28,6 @@
       * [Response](#function-response)
       * [Validator](#function-validator)
    * [Status](#status)
-   * [Tecnologies](#tecnologies)
 <!--te-->
 
 <br>
@@ -80,7 +79,7 @@ In your file.js, import the dependency and extract the common function that you 
 # Common Functions
 <a name="function-database"/>
 
-#### Database
+### Database
 It's a function to use PostgreSQL and you need to set the environment variables shown on the previous section. **PG** is the dependency that we use to connecting host.
 
 Note: We are used to using two types of instances: read and write. By the way, when you will use this function, remember to inform which of the options you wanna use.
@@ -95,7 +94,7 @@ Example:
 <br>
 <a name="function-error"/>
 
-#### Error
+### Error
 There are two models: HttpError and DbError. They are responsible for mount the default structure when an error is occurred.
 
 Example:
@@ -106,7 +105,7 @@ Example:
 <br>
 <a name="function-express"/>
 
-#### Express
+### Express
 To use express in your API, we recommend our common function. It's responsible to set default configs like: enable cors, format body, handle the error page (route not found), etc.
 
 Note: The default port is 3000.
@@ -122,7 +121,7 @@ Example:
 <br>
 <a name="function-logger"/>
 
-#### Logger
+### Logger
 There are some functions inside this module which we use either success or failure logs. They are important for debugging our API and register what's happening inside it.
 
 Example:
@@ -135,7 +134,7 @@ Example:
 <br>
 <a name="function-request"/>
 
-#### Request
+### Request
 When you need to do some request, we recommend to use this function. You just have to pass the options from your request like the example.
 
 Example:
@@ -153,7 +152,7 @@ Example:
 <br>
 <a name="function-response"/>
 
-#### Response
+### Response
 Each response from your API, you can use this standard function that receives the parameter res (from your express), body (body response) and HttpCode, in addition to setting up the structure to serve your client.
 
 Example:
@@ -166,7 +165,7 @@ Example:
 <br>
 <a name="function-validator"/>
 
-#### Validator
+### Validator
 It's a helper function that uses <a href="https://www.npmjs.com/package/jsonschema">jsonschema</a> and validade your received body.
 
 Example:
