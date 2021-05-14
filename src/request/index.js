@@ -32,7 +32,7 @@ const handler = (options) => {
         if(result.body[0] == '<'){
           return resolve(result.body);
         }
-        
+        let body;
         try{
           body = JSON.parse(result.body);
         }
