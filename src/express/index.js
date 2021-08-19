@@ -17,7 +17,7 @@ const _error    = require('../error');
 // config express
 const server = express();
 // parsing application/json
-server.use(bodyParser.json({ limit: '300kb' }));
+server.use(bodyParser.json({ limit: '600kb' }));
 // parsing application/x-www-form-urlencoded
 server.use(bodyParser.urlencoded({ extended: true }));
 // cors
