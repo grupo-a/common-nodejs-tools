@@ -60,6 +60,9 @@ const queryConnection = (consulta, params = [], client) => {
     });
 };
 
+/**
+ * @deprecated Use the getClient method to contract a transaction (https://node-postgres.com/features/transactions)
+ */
 const startTransaction = async () => {
   await _connect();
 
@@ -73,6 +76,9 @@ const startTransaction = async () => {
     });
 };
 
+/**
+ * @deprecated Use the getClient method to contract a transaction (https://node-postgres.com/features/transactions)
+ */
 const commit = async () => {
   await _connect();
 
@@ -86,6 +92,9 @@ const commit = async () => {
     });
 };
 
+/**
+ * @deprecated Use the getClient method to contract a transaction (https://node-postgres.com/features/transactions)
+ */
 const rollback = async () => {
   await _connect();
 
@@ -99,11 +108,17 @@ const rollback = async () => {
     });
 };
 
+const getClient = async () => {
+  const newClient = await poolWrite.connect();
+  return newClient;
+}
+
 module.exports = {
   query,
   queryFirstOrNull,
   queryConnection,
   startTransaction,
   commit,
-  rollback
+  rollback,
+  getClient
 };

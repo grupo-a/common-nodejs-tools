@@ -11,13 +11,13 @@ const uuid       = require('uuid');
 // helpers
 const _response = require('../response');
 const _logger   = require('../logger');
-const _error   = require('../error');
+const _error    = require('../error');
 
 //
 // config express
 const server = express();
 // parsing application/json
-server.use(bodyParser.json());
+server.use(bodyParser.json({ limit: '600kb' }));
 // parsing application/x-www-form-urlencoded
 server.use(bodyParser.urlencoded({ extended: true }));
 // cors
@@ -37,7 +37,7 @@ server.use((req, res, next) => {
 const _init = () => {
   // handler errors
   server.use((req, res, next) => {
-    _response.error(res, new _error.HttpError('Route not found', 404, '404-route-found'));
+    _response.error(res, new _error.HttpError(`Route not found - ${req.originalUrl}`, 404, '404-route-found'));
   });
   server.use((err, req, res, next) => {
     _response.error(res, err);

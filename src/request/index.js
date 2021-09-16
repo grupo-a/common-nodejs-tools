@@ -12,14 +12,35 @@ const handler = (options) => {
       }
 
       if (result.statusCode >= 300) {
-        const data = JSON.parse(result.body);
-        data.status_code = result.statusCode;
-        data.status_message = result.statusMessage;
-        return reject(data);
+        try {
+          const data = JSON.parse(result.body);
+          data.status_code = result.statusCode;
+          data.status_message = result.statusMessage;
+          return reject(data);
+        }
+        catch(err) {
+          const data = {
+            message: result.body,
+            status_code: result.statusCode,
+            status_message: result.statusMessage
+          };
+          return reject(data);
+        }
       }
 
       if (result.body) {
-        return resolve(JSON.parse(result.body));
+        if(result.body[0] == '<'){
+          return resolve(result.body);
+        }
+        let body;
+        try{
+          body = JSON.parse(result.body);
+        }
+        catch {
+          body = result.body;
+        }
+
+        return resolve(body);
       }
 
       return resolve();

@@ -51,9 +51,17 @@ const audit = (uuid, action, payloadWhere, payloadData) => {
   }));
 };
 
+const auditoria = (action, who, where, context, what) => {
+  console.log(stringify({
+    level: 'AUDIT',
+    body: { 'action': action, 'who': who, 'when': Date.now(), 'where': where, 'context': context, 'what': what }
+  }));
+};
+
 module.exports = {
   info,
   warn,
   error,
-  audit
+  audit,
+  auditoria
 };
