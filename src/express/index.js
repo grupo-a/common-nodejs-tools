@@ -34,6 +34,9 @@ server.use((req, res, next) => {
   next();
 });
 
+server.keepAliveTimeout = 61000;
+server.headersTimeout = 65000;
+
 const _init = () => {
   // handler errors
   server.use((req, res, next) => {
