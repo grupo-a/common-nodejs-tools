@@ -34,6 +34,7 @@ server.use((req, res, next) => {
   next();
 });
 
+server.globalAgent.keepAlive = true;
 server.keepAliveTimeout = 61000;
 server.headersTimeout = 65000;
 
