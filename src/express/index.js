@@ -6,6 +6,7 @@ const express    = require('express');
 const bodyParser = require('body-parser');
 const cors       = require('cors');
 const uuid       = require('uuid');
+const http       = require('http');
 
 //
 // helpers
@@ -33,6 +34,10 @@ server.use((req, res, next) => {
 
   next();
 });
+
+http.globalAgent.keepAlive = true;
+server.keepAliveTimeout = 61000;
+server.headersTimeout = 65000;
 
 const _init = () => {
   // handler errors
