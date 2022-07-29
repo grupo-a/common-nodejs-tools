@@ -36,8 +36,6 @@ server.use((req, res, next) => {
 });
 
 http.globalAgent.keepAlive = true;
-server.keepAliveTimeout = 61000;
-server.headersTimeout = 65000;
 
 const _init = () => {
   // handler errors
@@ -52,6 +50,9 @@ const _init = () => {
   server.listen(port, () => {
     _logger.info(`Listening on port ${port}`);
   });
+
+  server.keepAliveTimeout = 61000;
+  server.headersTimeout = 65000;
 }
 
 module.exports = {
