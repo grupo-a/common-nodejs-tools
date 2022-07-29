@@ -51,8 +51,8 @@ const _init = () => {
     _logger.info(`Listening on port ${port}`);
   });
 
-  server.keepAliveTimeout = 61000;
-  server.headersTimeout = 65000;
+  server.keepAliveTimeout = 65000;
+  server.headersTimeout = 66000;
 }
 
 module.exports = {
