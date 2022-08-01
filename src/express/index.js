@@ -35,8 +35,6 @@ server.use((req, res, next) => {
   next();
 });
 
-http.globalAgent.keepAlive = true;
-
 const _init = () => {
   // handler errors
   server.use((req, res, next) => {
