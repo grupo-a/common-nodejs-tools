@@ -6,7 +6,6 @@ const express    = require('express');
 const bodyParser = require('body-parser');
 const cors       = require('cors');
 const uuid       = require('uuid');
-const http       = require('http');
 
 //
 // helpers
