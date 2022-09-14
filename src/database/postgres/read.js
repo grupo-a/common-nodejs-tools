@@ -2,7 +2,8 @@
 
 //
 // dependencies
-const pg = require('pg');
+const xray = require('./xray.config');
+const pg   = xray.loadPG();
 
 //
 // pull read
