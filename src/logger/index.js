@@ -10,10 +10,11 @@ const infoEnable = process.env.LOG_INFO_ENABLE;
 const warnEnable = process.env.LOG_WARN_ENABLE;
 const errorEnable = process.env.LOG_ERROR_ENABLE;
 
-const info = (message, details) => {
+const info = (message, details, requestId = null) => {
   if (infoEnable) {
     console.log(stringify({
       level: 'INFO',
+      requestId,
       message,
       details
     }));
