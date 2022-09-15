@@ -2,8 +2,8 @@
 
 //
 // dependencies
-const xray = require('./xray.config');
-const pg   = xray.loadPG();
+// const xray = require('./xray.config');
+const pg = require('pg');
 
 //
 // helper
