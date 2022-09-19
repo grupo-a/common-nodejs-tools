@@ -2,7 +2,6 @@
 
 //
 // dependencies
-// const xray = require('./xray.config');
 const pg = require('pg');
 
 //
