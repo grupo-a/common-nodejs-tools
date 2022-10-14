@@ -6,6 +6,7 @@ const express    = require('express');
 const bodyParser = require('body-parser');
 const cors       = require('cors');
 const uuid       = require('uuid');
+const helmet     = require('helmet');
 
 //
 // helpers
@@ -16,6 +17,8 @@ const _error    = require('../error');
 //
 // config express
 const server = express();
+// security headers
+server.use(helmet());
 // parsing application/json
 server.use(bodyParser.json({ limit: '900kb' }));
 // parsing application/x-www-form-urlencoded
