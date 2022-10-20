@@ -43,7 +43,7 @@ const _init = () => {
     _response.error(res, err);
   });
 
-  const port = process.env.PORT || 3000;
+  const port = isNaN(parseInt(process.env.PORT)) ? 3000 : process.env.PORT
   server.listen(port, () => {
     _logger.info(`Listening on port ${port}`);
   });
