@@ -7,11 +7,12 @@ const pg = require('pg');
 //
 // pull read
 const poolRead = new pg.Pool({
-  host      : process.env.DB_READ_HOST,
-  port      : process.env.DB_PORT,
-  database  : process.env.DB_DATABASE,
-  user      : process.env.DB_USER,
-  password  : process.env.DB_PASSWORD,
+  host              : process.env.DB_READ_HOST,
+  port              : process.env.DB_PORT,
+  database          : process.env.DB_DATABASE,
+  user              : process.env.DB_USER,
+  password          : process.env.DB_PASSWORD,
+  statement_timeout : process.env.STATEMENT_TIMEOUT || 0,
   max       : 10
 });
 
