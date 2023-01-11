@@ -12,7 +12,7 @@ const poolRead = new pg.Pool({
   database          : process.env.DB_DATABASE,
   user              : process.env.DB_USER,
   password          : process.env.DB_PASSWORD,
-  statement_timeout : process.env.STATEMENT_TIMEOUT || 0,
+  statement_timeout : process.env.DB_STATEMENT_TIMEOUT || 0,
   max       : 10
 });
 
