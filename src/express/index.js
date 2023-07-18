@@ -5,7 +5,7 @@
 const express    = require('express');
 const bodyParser = require('body-parser');
 const cors       = require('cors');
-const uuid       = require('uuid');
+const { v4: uuid_v4 }        = require('uuid');
 
 //
 // helpers
@@ -28,7 +28,7 @@ require('express-async-errors');
 //
 // x-request-id
 server.use((req, res, next) => {
-  res.requestId = req.headers['X-Request-Id'] || uuid.v4();
+  res.requestId = req.headers['X-Request-Id'] || uuid_v4();
   res.setHeader('X-Request-Id', res.requestId);
 
   next();
