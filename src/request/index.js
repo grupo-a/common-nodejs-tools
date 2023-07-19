@@ -14,7 +14,7 @@ const handler = (options) => {
     axios(options).then(response => {
       return resolve(response.data);
     }).catch(err => {
-      return reject((err.response && err.response.data) || err);
+      return reject(err.response|| err);
     });
   });
 };
