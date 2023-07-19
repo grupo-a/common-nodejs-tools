@@ -14,7 +14,17 @@ const handler = (options) => {
     axios(options).then(response => {
       return resolve(response.data);
     }).catch(err => {
-      return reject(err.response|| err);
+      if (err.response) {
+        const messageError = {
+          ... err.response.data,
+          status: err.response.status,
+          statusMessage: err.response.statusText
+        }
+        return reject(messageError);
+      } else {
+        return reject(err);
+      }
+      
     });
   });
 };
