@@ -2,50 +2,44 @@
 
 //
 // dependencies
-const request = require('request');
+const axios = require('axios');
 
 const handler = (options) => {
-  return new Promise((resolve, reject) => {
-    request(options, (err, result) => {
-      if (err) {
-        return reject(err);
-      }
+  if (options.uri) {
+    options.url = options.uri;
+    delete options.uri;
+  }
 
-      if (result.statusCode >= 300) {
+  return axios(options)
+    .then(response => {
+      if (response.data) {
+        if (response.data[0] === '<') {
+          return response.data;
+        }
         try {
-          const data = JSON.parse(result.body);
-          data.status_code = result.statusCode;
-          data.status_message = result.statusMessage;
-          return reject(data);
-        }
-        catch(err) {
-          const data = {
-            message: result.body,
-            status_code: result.statusCode,
-            status_message: result.statusMessage
-          };
-          return reject(data);
+          return JSON.parse(response.data);
+        } catch {
+          return response.data;
         }
       }
 
-      if (result.body) {
-        if(result.body[0] == '<'){
-          return resolve(result.body);
-        }
-        let body;
-        try{
-          body = JSON.parse(result.body);
-        }
-        catch {
-          body = result.body;
-        }
-
-        return resolve(body);
+      return response.data;
+    })
+    .catch(err => {
+      try {
+        const data = JSON.parse(err.response.data);
+        data.status = err.response.status;
+        data.status_code = err.response.status;
+        data.status_message = err.response.statusText;
+        return data;
+      } catch (ignored) {
+        return {
+          message: err.response.data,
+          status_code: err.response.status,
+          status_message: err.response.statusText
+        };
       }
-
-      return resolve();
     });
-  });
 };
 
 module.exports = {
