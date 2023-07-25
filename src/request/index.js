@@ -25,7 +25,11 @@ const handler = async (options) => {
 
     return response.data;
   } catch (err) {
-    if (!err.response || !err.response.headers['content-type'].startsWith('application/json')) {
+    if (!err.response) {
+      throw err;
+    }
+
+    if (!err.response.headers['content-type'].startsWith('application/json')) {
       const { data = null, status = null, statusText = null } = err?.response ?? {};
       throw {
         message: data,
