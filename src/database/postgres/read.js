@@ -15,7 +15,15 @@ const poolRead = new pg.Pool({
   max       : 10
 });
 
+const validateQuery = (query) => {
+  if (query.match(/(UPDATE|INSERT|DELETE)/g)) {
+    throw new Error('This query is to WRITE and is executing into READ database, please change `postgres.read.*` with `postgres.write.*`');
+  }
+}
+
 const query = (query, params = []) => {
+  validateQuery(query);
+
   return poolRead.query(query, params)
     .then(result => {
       return result.rows;
@@ -26,6 +34,8 @@ const query = (query, params = []) => {
 };
 
 const queryFirstOrNull = (query, params = []) => {
+  validateQuery(query);
+  
   return poolRead.query(query, params)
     .then(result => {
       if (result.rowCount > 0) {
