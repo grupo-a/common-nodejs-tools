@@ -9,14 +9,15 @@ const pg = require('pg');
 const logger = require('../../logger');
 
 //
-// pull write
+// pool write
 const poolWrite = new pg.Pool({
-  host     : process.env.DB_WRITE_HOST,
-  port     : process.env.DB_PORT,
-  database : process.env.DB_DATABASE,
-  user     : process.env.DB_USER,
-  password : process.env.DB_PASSWORD,
-  max      : 10
+  host              : process.env.DB_WRITE_HOST,
+  port              : process.env.DB_PORT,
+  database          : process.env.DB_DATABASE,
+  user              : process.env.DB_USER,
+  password          : process.env.DB_PASSWORD,
+  statement_timeout : process.env.DB_STATEMENT_TIMEOUT || 0,
+  max               : 10
 });
 
 let client = null;
