@@ -17,6 +17,11 @@ const handler = async (options) => {
     delete options.uri;
   }
 
+  if (options.body) {
+    options.data = options.body;
+    delete options.body;
+  }
+
   try {
     const response = await axios({
       timeout: AXIOS_TIMEOUT,
