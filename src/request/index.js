@@ -17,9 +17,26 @@ const handler = async (options) => {
     delete options.uri;
   }
 
-  if (options.body) {
-    options.data = options.body;
-    delete options.body;
+  if (options.form) {
+    options.headers = {
+      ...options.headers,
+      'Content-Type': 'application/x-www-form-urlencoded'
+    };
+  }
+
+  if (options.formData) {
+    options.headers = {
+      ...options.headers,
+      'Content-Type': 'multipart/form-data'
+    }
+  }
+
+  for (const field of ['body', 'form', 'formData', 'json']) {
+    if (!options[field]) {
+      continue;
+    }
+    options.data = options[field];
+    delete options[field];
   }
 
   try {
