@@ -14,7 +14,7 @@ const pgConfig = {
   user              : process.env.DB_USER,
   password          : process.env.DB_PASSWORD,
   statement_timeout : process.env.DB_STATEMENT_TIMEOUT || 0,
-  max               : 10
+  max               : process.env.DB_POOL_MAX || 10
 };
 
 if (process.env.DB_ENABLE_SSL === 'true') {

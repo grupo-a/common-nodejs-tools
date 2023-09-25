@@ -18,11 +18,7 @@ const pgConfig = {
   user              : process.env.DB_USER,
   password          : process.env.DB_PASSWORD,
   statement_timeout : process.env.DB_STATEMENT_TIMEOUT || 0,
-  max               : 10,
-  ssl: {
-    rejectUnauthorized: true,
-    checkServerIdentity: () => {}
-  }
+  max               : process.env.DB_POOL_MAX || 10
 };
 
 if (process.env.DB_ENABLE_SSL === 'true') {
@@ -39,6 +35,7 @@ const poolWrite = new pg.Pool(pgConfig);
 
 let client = null;
 
+/** @deprecated Use connection pool instead */
 const _connect = async () => {
   if(client === null) {
     logger.info('poolWrite.connect started');
@@ -46,17 +43,13 @@ const _connect = async () => {
   }
 };
 
-const query = async (consulta, params = []) => {
-  await _connect();
-
-  const result = await client.query(consulta, params);
+const query = async (query, params = []) => {
+  const result = await poolWrite.query(query, params);
   return result.rows;
 };
 
 const queryFirstOrNull = async (query, params = []) => {
-  await _connect();
-
-  return client.query(query, params)
+  return poolWrite.query(query, params)
     .then(result => {
       if (result.rowCount > 0) {
         return result.rows[0];
@@ -68,8 +61,8 @@ const queryFirstOrNull = async (query, params = []) => {
     });
 };
 
-const queryConnection = (consulta, params = [], client) => {
-  return client.query(consulta, params)
+const queryConnection = (query, params = [], client) => {
+  return client.query(query, params)
     .then(result => {
       return result.rows;
     })
@@ -127,8 +120,7 @@ const rollback = async () => {
 };
 
 const getClient = async () => {
-  const newClient = await poolWrite.connect();
-  return newClient;
+  return await poolWrite.connect();
 }
 
 module.exports = {
