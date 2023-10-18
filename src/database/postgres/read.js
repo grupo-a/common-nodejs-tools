@@ -5,15 +5,29 @@
 const pg = require('pg');
 
 //
-// pull read
-const poolRead = new pg.Pool({
-  host      : process.env.DB_READ_HOST,
-  port      : process.env.DB_PORT,
-  database  : process.env.DB_DATABASE,
-  user      : process.env.DB_USER,
-  password  : process.env.DB_PASSWORD,
-  max       : 10
-});
+// pool read
+const noopIdentityCheck = () => {};
+const pgConfig = {
+  host              : process.env.DB_READ_HOST,
+  port              : process.env.DB_PORT,
+  database          : process.env.DB_DATABASE,
+  user              : process.env.DB_USER,
+  password          : process.env.DB_PASSWORD,
+  statement_timeout : process.env.DB_STATEMENT_TIMEOUT || 0,
+  max               : process.env.DB_POOL_MAX || 10
+};
+
+if (process.env.DB_ENABLE_SSL === 'true') {
+  pgConfig.ssl = {
+    rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED === 'true'
+  }
+
+  if (process.env.DB_SSL_DISABLE_IDENTITY_CHECK === 'true') {
+    pgConfig.ssl.checkServerIdentity = noopIdentityCheck;
+  }
+}
+
+const poolRead = new pg.Pool(pgConfig);
 
 const query = (query, params = []) => {
   return poolRead.query(query, params)
