@@ -6,6 +6,7 @@ const express    = require('express');
 const bodyParser = require('body-parser');
 const cors       = require('cors');
 const uuid       = require('uuid');
+const prometheusMiddleware = require('express-prometheus-middleware');
 
 //
 // helpers
@@ -33,6 +34,16 @@ server.use((req, res, next) => {
 
   next();
 });
+
+//
+// initialize prometheus scrapping for keda autoscaler
+server.use(prometheusMiddleware({
+  metricsPath            : '/metrics',
+  collectDefaultMetrics  : true,
+  requestDurationBuckets : [0.1, 0.5, 1, 1.5],
+  requestLengthBuckets   : [512, 1024, 5120, 10240, 51200, 102400],
+  responseLengthBuckets  : [512, 1024, 5120, 10240, 51200, 102400]
+}));
 
 const _init = () => {
   // handler errors
