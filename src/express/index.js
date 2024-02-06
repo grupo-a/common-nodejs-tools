@@ -59,7 +59,7 @@ const _init = () => {
     _logger.info(`Listening on port ${port}`);
   });
 
-  server.keepAliveTimeout = 5;
+  server.keepAliveTimeout = 600 * 1000;
 
   return server;
 }
