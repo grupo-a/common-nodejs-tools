@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const cors       = require('cors');
 const uuid       = require('uuid');
 const prometheusMiddleware = require('express-prometheus-middleware');
+const http2      = require('node:http2');
 
 //
 // helpers
@@ -55,7 +56,8 @@ const _init = () => {
   });
 
   const port = isNaN(parseInt(process.env.PORT)) ? 3000 : process.env.PORT
-  const server = app.listen(port, () => {
+  const server = http2.createServer(app);
+  app.listen(port, '0.0.0.0', () => {
     _logger.info(`Listening on port ${port}`);
   });
 
