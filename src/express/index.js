@@ -16,19 +16,19 @@ const _error    = require('../error');
 
 //
 // config express
-const server = express();
+const app = express();
 // parsing application/json
-server.use(bodyParser.json({ limit: '900kb' }));
+app.use(bodyParser.json({ limit: '900kb' }));
 // parsing application/x-www-form-urlencoded
-server.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
 // cors
-server.use(cors());
+app.use(cors());
 // async error
 require('express-async-errors');
 
 //
 // x-request-id
-server.use((req, res, next) => {
+app.use((req, res, next) => {
   res.requestId = req.headers['X-Request-Id'] || uuid.v4();
   res.setHeader('X-Request-Id', res.requestId);
 
@@ -37,7 +37,7 @@ server.use((req, res, next) => {
 
 //
 // initialize prometheus scrapping for keda autoscaler
-server.use(prometheusMiddleware({
+app.use(prometheusMiddleware({
   metricsPath            : '/metrics',
   collectDefaultMetrics  : true,
   requestDurationBuckets : [0.1, 0.5, 1, 1.5],
@@ -47,23 +47,25 @@ server.use(prometheusMiddleware({
 
 const _init = () => {
   // handler errors
-  server.use((req, res, next) => {
+  app.use((req, res, next) => {
     _response.error(res, new _error.HttpError(`Route not found - ${req.originalUrl}`, 404, '404-route-found'));
   });
-  server.use((err, req, res, next) => {
+  app.use((err, req, res, next) => {
     _response.error(res, err);
   });
 
   const port = isNaN(parseInt(process.env.PORT)) ? 3000 : process.env.PORT
-  server.listen(port, () => {
+  const server = app.listen(port, () => {
     _logger.info(`Listening on port ${port}`);
   });
 
-  server.keepAliveTimeout = 65000;
+  server.keepAliveTimeout = 72000;
   server.headersTimeout = 66000;
+
+  return server;
 }
 
 module.exports = {
-  instance: server,
+  instance: app,
   init: _init
 }
