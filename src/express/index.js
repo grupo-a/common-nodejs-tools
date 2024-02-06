@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const cors       = require('cors');
 const uuid       = require('uuid');
 const prometheusMiddleware = require('express-prometheus-middleware');
-const http2      = require('node:http2');
+const http      = require('node:http');
 
 //
 // helpers
@@ -56,14 +56,14 @@ const _init = () => {
   });
 
   const port = isNaN(parseInt(process.env.PORT)) ? 3000 : process.env.PORT
-  const server = http2.createServer(app);
+  const server = http.createServer({
+    keepAlive: true,
+    keepAliveTimeout: 72000,
+    headersTimeout: 82000
+  }, app);
   app.listen(port, '0.0.0.0', () => {
     _logger.info(`Listening on port ${port}`);
   });
-
-  server.keepAlive = true;
-  server.keepAliveTimeout = 600 * 1000;
-  server.headersTimeout = 610 * 1000;
 
   return server;
 }
