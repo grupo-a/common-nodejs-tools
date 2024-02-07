@@ -3,6 +3,7 @@
 //
 // dependencies
 const express    = require('express');
+require('express-async-errors');
 const bodyParser = require('body-parser');
 const cors       = require('cors');
 const uuid       = require('uuid');
