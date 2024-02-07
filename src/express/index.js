@@ -7,7 +7,6 @@ const bodyParser = require('body-parser');
 const cors       = require('cors');
 const uuid       = require('uuid');
 const prometheusMiddleware = require('express-prometheus-middleware');
-const http      = require('node:http');
 
 //
 // helpers
@@ -24,8 +23,6 @@ app.use(bodyParser.json({ limit: '900kb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 // cors
 app.use(cors());
-// async error
-require('express-async-errors');
 
 //
 // x-request-id
@@ -49,21 +46,29 @@ app.use(prometheusMiddleware({
 const _init = () => {
   // handler errors
   app.use((req, res, next) => {
-    _response.error(res, new _error.HttpError(`Route not found - ${req.originalUrl}`, 404, '404-route-found'));
+    try {
+      _response.error(res, new _error.HttpError(`Route not found - ${req.originalUrl}`, 404, '404-route-found'));
+    } catch (err) {
+      console.error('error on 404 handler', err)
+      res.status(204).send('Internal Server Error');
+    }
   });
   app.use((err, req, res, next) => {
-    _response.error(res, err);
+    try {
+      _response.error(res, err);
+    } catch (err) {
+      console.error('error on error handler', err)
+      res.status(204).send('Internal Server Error');
+    }
   });
 
   const port = isNaN(parseInt(process.env.PORT)) ? 3000 : process.env.PORT
-  const server = http.createServer({
-    keepAlive: true,
-    keepAliveTimeout: 72000,
-    headersTimeout: 82000
-  }, app);
-  app.listen(port, '0.0.0.0', () => {
+  const server = app.listen(port, () => {
     _logger.info(`Listening on port ${port}`);
   });
+
+  server.keepAliveTimeout = 72000;
+  server.headersTimeout = 66000;
 
   return server;
 }
