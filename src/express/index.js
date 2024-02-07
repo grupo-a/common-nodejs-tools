@@ -46,20 +46,10 @@ app.use(prometheusMiddleware({
 const _init = () => {
   // handler errors
   app.use((req, res, next) => {
-    try {
-      _response.error(res, new _error.HttpError(`Route not found - ${req.originalUrl}`, 404, '404-route-found'));
-    } catch (err) {
-      console.error('error on 404 handler', err)
-      res.status(204).send('Internal Server Error');
-    }
+    _response.error(res, new _error.HttpError(`Route not found - ${req.originalUrl}`, 404, '404-route-found'));
   });
   app.use((err, req, res, next) => {
-    try {
-      _response.error(res, err);
-    } catch (err) {
-      console.error('error on error handler', err)
-      res.status(204).send('Internal Server Error');
-    }
+    _response.error(res, err);
   });
 
   const port = isNaN(parseInt(process.env.PORT)) ? 3000 : process.env.PORT
@@ -68,7 +58,6 @@ const _init = () => {
   });
 
   server.keepAliveTimeout = 72000;
-  server.headersTimeout = 66000;
 
   return server;
 }
