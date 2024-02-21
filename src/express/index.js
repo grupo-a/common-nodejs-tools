@@ -7,12 +7,19 @@ const bodyParser = require('body-parser');
 const cors       = require('cors');
 const uuid       = require('uuid');
 const prometheusMiddleware = require('express-prometheus-middleware');
+const closeWithGrace = require('close-with-grace');
 
 //
 // helpers
 const _response = require('../response');
 const _logger   = require('../logger');
 const _error    = require('../error');
+const healthcheck = require('./healthcheck');
+
+// constants
+const FORCE_CLOSE_DELAY = 1000;
+const DEFAULT_PORT = 3000;
+const KEEP_ALIVE_TIMEOUT = 72000;
 
 //
 // config express
@@ -52,17 +59,26 @@ const _init = () => {
     _response.error(res, err);
   });
 
-  const port = isNaN(parseInt(process.env.PORT)) ? 3000 : process.env.PORT
+  const port = isNaN(parseInt(process.env.PORT)) ? DEFAULT_PORT : process.env.PORT
   const server = app.listen(port, () => {
     _logger.info(`Listening on port ${port}`);
   });
+  server.keepAliveTimeout = KEEP_ALIVE_TIMEOUT;
 
-  server.keepAliveTimeout = 72000;
+  closeWithGrace({ delay: FORCE_CLOSE_DELAY }, function(opts, cb) {
+    _logger.info('Closing the server...');
+    if (opts.err) {
+      _logger.error('Closing with error', opts.err);
+    }
+
+    return server.close(cb);
+  });
 
   return server;
-}
+};
 
 module.exports = {
   instance: app,
-  init: _init
+  init: _init,
+  healthcheck
 }
