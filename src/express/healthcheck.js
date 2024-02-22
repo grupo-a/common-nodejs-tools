@@ -39,7 +39,7 @@ const healthcheck = (opts) => {
   }
 
   if (!!opts.healthcheckResponse && typeof opts.healthcheckResponse !== 'function') {
-    throw new Error('customHealthCheck should be a function');
+    throw new Error('healthcheckResponse should be a function');
   }
 
   const router = Router();
@@ -50,18 +50,15 @@ const healthcheck = (opts) => {
   const healthcheckResponse = opts.healthcheckResponse;
 
   router.get(liveness, (req, res) => {
-    logger.info('Liveness OK');
     res.status(200).send(getHealthcheckResponse(healthcheckResponse));
   });
 
   router.get(readiness, async (req, res) => {
     try {
-      logger.info('Readiness UNHEALTHY');
-
       await fs.access('.unhealthy');
+      logger.info('Readiness UNHEALTHY', process.env.BUILD_NUMBER ?? 'unknown');
       return res.status(503).send();
     } catch (err) {
-      logger.info('Readiness OK');
       res.status(200).send(getHealthcheckResponse(healthcheckResponse));
     }
   });
