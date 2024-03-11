@@ -50,7 +50,18 @@ app.use(prometheusMiddleware({
   responseLengthBuckets  : [512, 1024, 5120, 10240, 51200, 102400]
 }));
 
-const _init = () => {
+/**
+ * @param [opts] {{
+ *   startServer?: boolean,
+ *   forceCloseDelay?: number,
+ *   port?: number
+ * }}
+ * @returns {import('node:http').Server}
+ * @private
+ */
+const _init = (opts = {}) => {
+  const { startServer = true, forceCloseDelay = FORCE_CLOSE_DELAY } = opts;
+
   // handler errors
   app.use((req, res, next) => {
     _response.error(res, new _error.HttpError(`Route not found - ${req.originalUrl}`, 404, '404-route-found'));
@@ -59,19 +70,22 @@ const _init = () => {
     _response.error(res, err);
   });
 
-  const port = isNaN(parseInt(process.env.PORT)) ? DEFAULT_PORT : process.env.PORT
+  if (!startServer) {
+    return {};
+  }
+  const port = opts.port ?? (isNaN(parseInt(process.env.PORT)) ? DEFAULT_PORT : process.env.PORT);
   const server = app.listen(port, () => {
     _logger.info(`Listening on port ${port}`);
   });
   server.keepAliveTimeout = KEEP_ALIVE_TIMEOUT;
 
-  closeWithGrace({ delay: FORCE_CLOSE_DELAY }, function(opts, cb) {
+  closeWithGrace({ delay: forceCloseDelay }, function(opts, cb) {
     _logger.info('Closing the server...');
     if (opts.err) {
       _logger.error('Closing with error', opts.err);
     }
 
-    return server.close(cb);
+    return server?.close?.(cb);
   });
 
   return server;
