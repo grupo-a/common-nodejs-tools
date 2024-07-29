@@ -45,13 +45,20 @@ const error = (message, error) => {
   }
 };
 
-const audit = (uuid, action, payloadWhere, payloadData) => {
+/**
+ * @param {*} action 
+ * @param {*} who 
+ * @param {*} where 
+ * @param {*} data 
+ */
+const audit = (who, action, where, data) => {
   console.log(stringify({
     level: 'AUDIT',
-    body: { 'what': action, 'who': uuid, 'when': Date.now(), 'where': payloadWhere, 'payload': payloadData }
+    body: { 'action': action, 'who': who, 'when': Date.now(), 'where': where, 'payload': data }
   }));
 };
 
+/**  @deprecated use the "audit" method */
 const auditoria = (action, who, where, context, what) => {
   console.log(stringify({
     level: 'AUDIT',
@@ -59,10 +66,22 @@ const auditoria = (action, who, where, context, what) => {
   }));
 };
 
+/**
+ * @param {string} event 
+ * @param {object} data 
+ */
+const tracking = (event, data) => {
+  console.log(stringify({
+    level: 'TRACKING',
+    body: { 'event': event, 'data': data, 'when': Date.now() }
+  }));
+}
+
 module.exports = {
   info,
   warn,
   error,
   audit,
-  auditoria
+  auditoria,
+  tracking
 };
