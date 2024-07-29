@@ -3,6 +3,7 @@
 //
 // dependencies
 const stringify = require('json-stringify-safe');
+const uuid = require('uuid')
 
 //
 // ENVs
@@ -67,13 +68,33 @@ const auditoria = (action, who, where, context, what) => {
 };
 
 /**
- * @param {string} event 
- * @param {object} data 
- */
-const tracking = (event, data) => {
+ * @param {Object} event - The details of the event.
+ * @param {string} event.name - The name of the event.
+ * @param {string} event.eventId - The unique ID of the event.
+ * @param {string} event.sourceSystem - The source system of the event.
+ * @param {string} event.sourceUrl - The source URL of the event.
+ * @param {Object} user - The details of the user.
+ * @param {string} user.email - The email of the user.
+ * @param {string} user.externalId - The external ID of the user.
+ * @param {string} user.name - The name of the user.
+ * @param {Object} metadata - Additional metadata for the event.
+*/ 
+const tracking = ({ name, id, sourceSystem, sourceUrl }, { email, externalId, name }, metadata) => {
   console.log(stringify({
     level: 'TRACKING',
-    body: { 'event': event, 'data': data, 'when': Date.now() }
+    body: { 
+      event: name,
+      eventId: id ?? uuid.v4(),
+      sourceSystem,
+      sourceUrl,
+      user: {
+        email,
+        externalId,
+        name
+      },
+      metadata, 
+      when: Date.now() 
+    }
   }));
 }
 
