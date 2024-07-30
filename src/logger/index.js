@@ -79,19 +79,15 @@ const auditoria = (action, who, where, context, what) => {
  * @param {string} user.name - The name of the user.
  * @param {Object} metadata - Additional metadata for the event.
 */ 
-const tracking = ({ name, id, sourceSystem, sourceUrl }, { email, externalId, name }, metadata) => {
+const tracking = (event, user, metadata) => {
   console.log(stringify({
     level: 'TRACKING',
     body: { 
-      event: name,
-      eventId: id ?? uuid.v4(),
-      sourceSystem,
-      sourceUrl,
-      user: {
-        email,
-        externalId,
-        name
-      },
+      event: event.name,
+      eventId: event.id ?? uuid.v4(),
+      sourceSystem: event.sourceSystem,
+      sourceUrl: event.sourceUrl,
+      user,
       metadata, 
       when: Date.now() 
     }
