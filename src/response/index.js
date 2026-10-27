@@ -4,6 +4,10 @@
 // dependencies
 const _logger = require('../logger');
 
+//
+// consts
+const INTERNAL_ERROR_MESSAGE = 'Internal server error';
+
 const _createResponse = (res, body, statusCode, headers = { }) => {
   const mergeHeaders = {
     'Cache-Control': 'private, max-age=0, no-cache, no-store, must-revalidate',
@@ -23,7 +27,8 @@ const error = (res, error) => {
   const body = {
     error: {
       code: error.businessStatusCode || '500_internal-error-server',
-      message: error.message
+      // the message of a 5xx can carry internal details, so it stays only in the log
+      message: statusCode >= 500 ? INTERNAL_ERROR_MESSAGE : error.message
     },
     requestId: res.requestId
   };
