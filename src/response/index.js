@@ -3,6 +3,7 @@
 //
 // dependencies
 const _logger = require('../logger');
+const _error  = require('../error');
 
 //
 // consts
@@ -23,12 +24,18 @@ const success = (res, body, statusCode = 200, headers = { }) => {
 }
 
 const error = (res, error) => {
+  // a thrown primitive (throw 'text') has no fields to read or to set
+  if (error === null || typeof error !== 'object') {
+    error = new Error(String(error));
+  }
+
   const statusCode = error.httpStatusCode || 500;
+  // only an HttpError has a message written for the client; the message of any other 5xx stays only in the log
+  const isInternal = !(error instanceof _error.HttpError) && statusCode >= 500;
   const body = {
     error: {
       code: error.businessStatusCode || '500_internal-error-server',
-      // the message of a 5xx can carry internal details, so it stays only in the log
-      message: statusCode >= 500 ? INTERNAL_ERROR_MESSAGE : error.message
+      message: isInternal ? INTERNAL_ERROR_MESSAGE : error.message
     },
     requestId: res.requestId
   };
