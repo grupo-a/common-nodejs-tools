@@ -24,21 +24,22 @@ const KEEP_ALIVE_TIMEOUT = 72000;
 //
 // config express
 const app = express();
-// parsing application/json
-app.use(bodyParser.json({ limit: '900kb' }));
-// parsing application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: true }));
-// cors
-app.use(cors());
 
 //
-// x-request-id
+// x-request-id - before the body parsers, so their errors also get a request id
 app.use((req, res, next) => {
   res.requestId = req.headers['X-Request-Id'] || uuid.v4();
   res.setHeader('X-Request-Id', res.requestId);
 
   next();
 });
+
+// parsing application/json
+app.use(bodyParser.json({ limit: '900kb' }));
+// parsing application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
+// cors
+app.use(cors());
 
 //
 // initialize prometheus scrapping for keda autoscaler
