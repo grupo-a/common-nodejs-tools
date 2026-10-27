@@ -20,6 +20,7 @@ const healthcheck = require('./healthcheck');
 const FORCE_CLOSE_DELAY = 1000;
 const DEFAULT_PORT = 3000;
 const KEEP_ALIVE_TIMEOUT = 72000;
+const REQUEST_ID_PATTERN = /^[A-Za-z0-9._-]{1,128}$/;
 
 //
 // config express
@@ -28,7 +29,9 @@ const app = express();
 //
 // x-request-id - before the body parsers, so their errors also get a request id
 app.use((req, res, next) => {
-  res.requestId = req.headers['X-Request-Id'] || uuid.v4();
+  // node lowercases the names of the incoming headers
+  const requestId = req.headers['x-request-id'];
+  res.requestId = typeof requestId === 'string' && REQUEST_ID_PATTERN.test(requestId) ? requestId : uuid.v4();
   res.setHeader('X-Request-Id', res.requestId);
 
   next();
